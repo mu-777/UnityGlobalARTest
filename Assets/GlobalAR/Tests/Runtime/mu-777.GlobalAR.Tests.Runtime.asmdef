@@ -1,0 +1,21 @@
+{
+    "name": "mu-777.GlobalAR.Tests",
+    "references": [
+        "UnityEngine.TestRunner",
+        "mu-777.GlobalAR.Runtime",
+        "mu-777.GlobalAR.Editor"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,17 @@
+{
+    "name": "mu-777.GlobalAR.Editor",
+    "references": [
+        "GUID:35ef62488b6d1f348a844175e428d77b"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
