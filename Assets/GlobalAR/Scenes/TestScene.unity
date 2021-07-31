@@ -343,5 +343,6 @@ MonoBehaviour:
   geoLocationEstimatorConfig: {fileID: 11400000, guid: 81b1f9bdcc0e4df4da551f0ebb7703fc,
     type: 2}
   geoDataLoaderSystem: 0
-  geoDataLoaderConfig: {fileID: 0}
+  geoDataLoaderConfig: {fileID: 11400000, guid: 652184f24c09420479295b38f4a63426,
+    type: 2}
   geoLocUpdateIntervalSec: 3

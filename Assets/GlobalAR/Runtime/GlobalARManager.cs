@@ -19,9 +19,8 @@ namespace GlobalAR
 
         void Start()
         {
-            var geoLocEstimator = GeoLocationEstimatorFactory.Create(geoLocationEstimatorSystem, geoLocationEstimatorConfig);
-            var geoLoader = GeoDataLoaderFactory.Create(geoDataLoaderSystem, geoDataLoaderConfig);
-            _geoDataManager = new GeoDataManager(geoLocEstimator, geoLoader);
+            GeoLocationManager.Instance.Initialize(geoLocationEstimatorSystem, geoLocationEstimatorConfig);
+            GeoDataManager.Instance.Initialize(geoDataLoaderSystem, geoDataLoaderConfig);
         }
 
         void OnEnable()
@@ -36,6 +35,7 @@ namespace GlobalAR
 
         void Update()
         {
+            GeoLocationManager.Instance.EstimateGeoLocation(out var geoPose);
         }
 
         private void StartGeoLocationUpdateCoroutine()
@@ -61,7 +61,7 @@ namespace GlobalAR
             while (true)
             {
                 yield return yielder;
-                _geoDataManager.Update();
+                GeoDataManager.Instance.Update(GeoLocationManager.Instance.CurrGeoPose);
             }
         }
     }

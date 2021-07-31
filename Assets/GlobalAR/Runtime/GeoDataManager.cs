@@ -6,20 +6,32 @@ namespace GlobalAR
 {
     public class GeoDataManager
     {
-        private IGeoLocationEstimator _geoLocEstimator;
-        private IGeoDataLoader _geoLoader;
-
-        public GeoDataManager(IGeoLocationEstimator geoLocEstimator, IGeoDataLoader geoLoader)
+        private static GeoDataManager _instance;
+        public static GeoDataManager Instance
         {
-            _geoLocEstimator = geoLocEstimator;
-            _geoLoader = geoLoader;
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new GeoDataManager();
+                }
+                return _instance;
+            }
         }
 
-        public void Update()
-        {
-            _geoLocEstimator.EstimateGeoLocation(out var geoPose);
-            Debug.Log(string.Format("Altitude: {0}", geoPose.Altitude));
+        private IGeoDataLoader _geoLoader;
 
+        public void Initialize(GeoDataLoaderSystem system, ScriptableObject config)
+        {
+            _geoLoader = GeoDataLoaderFactory.Create(system, config);
+        }
+
+        public void Update(GeoLocation currGeoPose)
+        {
+            if (!IsGeoDataLoaded())
+            {
+                _geoLoader.LoadGeoData(currGeoPose, out var data);
+            }
         }
 
         private bool IsGeoDataLoaded()
