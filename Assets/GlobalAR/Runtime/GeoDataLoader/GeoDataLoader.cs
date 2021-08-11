@@ -11,7 +11,7 @@ namespace GlobalAR
 
     public interface IGeoDataLoader
     {
-        GARResult LoadGeoData(GeoLocation geoPose, out GeoData data);
+        GARResult LoadGeoData(int geoMeshCode3rd, out GeoData data);
     }
 
     public class GeoDataLoaderFactory

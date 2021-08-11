@@ -11,7 +11,7 @@ namespace GlobalAR
         {
             get
             {
-                if (_instance == null)
+                if(_instance == null)
                 {
                     _instance = new GeoDataManager();
                 }
@@ -20,6 +20,12 @@ namespace GlobalAR
         }
 
         private IGeoDataLoader _geoLoader;
+        private Dictionary<int, GeoData> _geoDataCache;
+
+        private GeoDataManager()
+        {
+            _geoDataCache = new Dictionary<int, GeoData>();
+        }
 
         public void Initialize(GeoDataLoaderSystem system, ScriptableObject config)
         {
@@ -28,15 +34,17 @@ namespace GlobalAR
 
         public void Update(GeoLocation currGeoPose)
         {
-            if (!IsGeoDataLoaded())
-            {
-                _geoLoader.LoadGeoData(currGeoPose, out var data);
-            }
-        }
+            var geoMeshCode = GeoDataUtils.GeoLocationToMeshCode3rd(currGeoPose);
 
-        private bool IsGeoDataLoaded()
-        {
-            return false;
+            if(_geoDataCache.ContainsKey(geoMeshCode))
+            {
+                return;
+            }
+
+            if(_geoLoader.LoadGeoData(geoMeshCode, out var data) == GARResult.SUCCESS)
+            {
+                _geoDataCache.Add(geoMeshCode, data);
+            }
         }
     }
 

@@ -29,7 +29,8 @@ namespace Tests
             var geoPose = new GeoLocation();
             geoPose.Latitude = lat;
             geoPose.Longtitude = lon;
-            Assert.AreEqual(geoDataLoader.LoadGeoData(geoPose, out var geoData), GARResult.SUCCESS);
+            Assert.AreEqual(geoDataLoader.LoadGeoData(GeoDataUtils.GeoLocationToMeshCode3rd(geoPose),
+                                                      out var geoData), GARResult.SUCCESS);
             Assert.AreEqual(expectedLowerCornerLat, geoData.lowerCorner.Latitude, acceptableError);
             Assert.AreEqual(expectedFirstBuildingId, geoData.buildings[0].buildingId);
             Assert.AreEqual(expectedFirstBuildingLod0Lon, geoData.buildings[0].lod0FootPrint[0].Longtitude, acceptableError);
@@ -43,22 +44,23 @@ namespace Tests
             var config = new LocalGeoDataLoaderConfig();
             config.GmlDirPath = Path.GetFullPath("Assets/GlobalAR/Tests/Resources/GMLDir");
 
+            GeoDataManager.Instance.Initialize(GeoDataLoaderSystem.Local, config);
+
             var geoDataLoader = new LocalGeoDataLoader(config);
             var geoPose = new GeoLocation();
             geoPose.Latitude = lat;
             geoPose.Longtitude = lon;
 
             sw.Start();
-            geoDataLoader.LoadGeoData(geoPose, out var geoData1);
+            GeoDataManager.Instance.Update(geoPose);
             sw.Stop();
             var loadTime1 = sw.Elapsed;
 
             sw.Restart();
-            geoDataLoader.LoadGeoData(geoPose, out var geoData2);
+            GeoDataManager.Instance.Update(geoPose);
             sw.Stop();
             var loadTime2 = sw.Elapsed;
             Assert.Less(loadTime2.Seconds, loadTime1.Seconds * 0.1f);
-            Assert.AreEqual(geoData1.buildings[0].buildingId, geoData2.buildings[0].buildingId);
         }
 
         [TestCase(35.666863f, 139.74954f, 53394509, TestName = "Tranomon")]

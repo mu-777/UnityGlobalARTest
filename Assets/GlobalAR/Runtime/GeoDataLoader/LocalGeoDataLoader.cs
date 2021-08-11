@@ -10,26 +10,16 @@ namespace GlobalAR
     public class LocalGeoDataLoader : IGeoDataLoader
     {
         private LocalGeoDataLoaderConfig _config;
-        private Dictionary<int, GeoData> _geoDataCache;
-
 
         public LocalGeoDataLoader(ScriptableObject config)
         {
             _config = config as LocalGeoDataLoaderConfig;
-            _geoDataCache = new Dictionary<int, GeoData>();
         }
 
-        public GARResult LoadGeoData(GeoLocation geoPose, out GeoData data)
+        public GARResult LoadGeoData(int geoMeshCode3rd, out GeoData data)
         {
-            var meshCode3rd = GeoDataUtils.GeoLocationToMeshCode3rd(geoPose);
-            if (_geoDataCache.ContainsKey(meshCode3rd))
-            {
-                data = _geoDataCache[meshCode3rd];
-                return GARResult.SUCCESS;
-            }            
-            var gml = XElement.Load(FormatGMLFilePath(meshCode3rd));
+            var gml = XElement.Load(FormatGMLFilePath(geoMeshCode3rd));
             var res = CityGMLParser.Parse(gml, out data);
-            _geoDataCache.Add(meshCode3rd, data);
             return res;
         }
 
