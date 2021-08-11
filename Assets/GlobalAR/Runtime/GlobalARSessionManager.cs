@@ -103,7 +103,8 @@ namespace GlobalAR
 
         internal void DestroySession()
         {
-
+            GeoLocationManager.Instance.DestroySelf();
+            GeoDataManager.Instance.DestroySelf();
         }
 
         private IEnumerator GeoDataUpdateCoroutine()

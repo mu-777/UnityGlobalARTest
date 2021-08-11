@@ -44,8 +44,6 @@ namespace GlobalAR
         void OnDestroy()
         {
             GlobalARSessionManager.Instance.DestroySession();
-            GeoLocationManager.Instance.DestroySelf();
-            GeoDataManager.Instance.DestroySelf();
         }
     }
 }
