@@ -56,6 +56,11 @@ namespace GlobalAR
 
             SessionComponent = sessionComponent;
             Config = SessionComponent.globalARSessionConfig;
+
+            GeoLocationManager.Instance.Initialize(SessionComponent.geoLocationEstimatorSystem,
+                                                   SessionComponent.geoLocationEstimatorConfig);
+            GeoDataManager.Instance.Initialize(SessionComponent.geoDataLoaderSystem,
+                                               SessionComponent.geoDataLoaderConfig);
         }
 
         internal void StartSession()
@@ -67,6 +72,14 @@ namespace GlobalAR
                     cinfo.Coroutine = SessionComponent.StartCoroutine(cinfo.CoroutineFunc);
                 }
             }
+
+            GeoDataManager.Instance.NewGeoDataLoadedEvent += (GeoData result) =>
+            {
+                if (SessionComponent.OnNewGeoDataLoaded != null)
+                {
+                    SessionComponent.OnNewGeoDataLoaded.Invoke(result);
+                }
+            };
         }
 
         internal void StopSession()
@@ -79,6 +92,8 @@ namespace GlobalAR
                     cinfo.Coroutine = null;
                 }
             }
+
+            GeoDataManager.Instance.NewGeoDataLoadedEvent = null;
         }
 
         internal void UpdateSession()
@@ -108,13 +123,13 @@ namespace GlobalAR
         {
             var task = GeoLocationManager.Instance.CoordAlignmentAsync();
             yield return new WaitUntil(() => task.IsCompleted);
-            if (!task.Result)
+            if(!task.Result)
             {
                 Debug.LogError("Fail to alignment");
             }
 
             var yielder = new WaitForEndOfFrame();
-            while (true)
+            while(true)
             {
                 yield return yielder;
                 GeoLocationManager.Instance.EstimateGeoLocation(out _, out _);
