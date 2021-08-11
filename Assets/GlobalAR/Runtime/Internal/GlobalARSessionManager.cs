@@ -20,7 +20,8 @@ namespace GlobalAR
             }
         }
 
-        public GlobalARSession SessionComponent { get; private set; }
+        public static GlobalARSession Session { get { return _instance?._sessionComponent; } }
+        private GlobalARSession _sessionComponent;
 
         internal GlobalARSessionConfig Config { get; private set; }
 
@@ -47,20 +48,20 @@ namespace GlobalAR
         {
             //sessionComponent.StartCoroutine(InstantPreviewManager.InitializeIfNeeded());
 
-            if(SessionComponent != null)
+            if(_sessionComponent != null)
             {
                 Debug.LogError("Multiple session components cannot exist in the scene. Destroying the newest.");
                 GameObject.Destroy(sessionComponent);
                 return;
             }
 
-            SessionComponent = sessionComponent;
-            Config = SessionComponent.globalARSessionConfig;
+            _sessionComponent = sessionComponent;
+            Config = _sessionComponent.globalARSessionConfig;
 
-            GeoLocationManager.Instance.Initialize(SessionComponent.geoLocationEstimatorSystem,
-                                                   SessionComponent.geoLocationEstimatorConfig);
-            GeoDataManager.Instance.Initialize(SessionComponent.geoDataLoaderSystem,
-                                               SessionComponent.geoDataLoaderConfig);
+            GeoLocationManager.Instance.Initialize(_sessionComponent.geoLocationEstimatorSystem,
+                                                   _sessionComponent.geoLocationEstimatorConfig);
+            GeoDataManager.Instance.Initialize(_sessionComponent.geoDataLoaderSystem,
+                                               _sessionComponent.geoDataLoaderConfig);
         }
 
         internal void StartSession()
@@ -69,15 +70,15 @@ namespace GlobalAR
             {
                 if(cinfo.Coroutine == null)
                 {
-                    cinfo.Coroutine = SessionComponent.StartCoroutine(cinfo.CoroutineFunc);
+                    cinfo.Coroutine = _sessionComponent.StartCoroutine(cinfo.CoroutineFunc);
                 }
             }
 
             GeoDataManager.Instance.NewGeoDataLoadedEvent += (GeoData result) =>
             {
-                if (SessionComponent.OnNewGeoDataLoaded != null)
+                if (_sessionComponent.OnNewGeoDataLoaded != null)
                 {
-                    SessionComponent.OnNewGeoDataLoaded.Invoke(result);
+                    _sessionComponent.OnNewGeoDataLoaded.Invoke(result);
                 }
             };
         }
@@ -88,7 +89,7 @@ namespace GlobalAR
             {
                 if(cinfo.Coroutine != null)
                 {
-                    SessionComponent.StopCoroutine(cinfo.Coroutine);
+                    _sessionComponent.StopCoroutine(cinfo.Coroutine);
                     cinfo.Coroutine = null;
                 }
             }

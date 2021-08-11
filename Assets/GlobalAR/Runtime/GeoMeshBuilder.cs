@@ -2,17 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GeoMeshBuilder : MonoBehaviour
+namespace GlobalAR
 {
-    // Start is called before the first frame update
-    void Start()
+    public class GeoMeshBuilder : MonoBehaviour
     {
-        
-    }
+        public Transform origin;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        void Start()
+        {
+            GlobalARSessionManager.Session.OnNewGeoDataLoaded.AddListener(this.AddMesh);
+        }
+
+        public void AddMesh(GeoData newGeoData)
+        {
+
+        }
     }
 }
