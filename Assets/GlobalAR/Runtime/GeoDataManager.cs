@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -42,23 +42,28 @@ namespace GlobalAR
 
     //ref: https://tech.atware.co.jp/mesh-system/
     //ref: https://qiita.com/yuusei/items/549402a80efd7e7192ef
-    public static class GeoDataLoaderUtils
+    public static class GeoDataUtils
     {
+        private static int FloorToInt(double x)
+        {
+            return (int)(Math.Floor(x));
+        }
+
         public static int GeoLocationToMeshCode1st(GeoLocation geoPose)
         {
-            return Mathf.FloorToInt(geoPose.Latitude * 1.5f) * 100 + Mathf.FloorToInt(geoPose.Longtitude - 100);
+            return FloorToInt(geoPose.Latitude * 1.5) * 100 + FloorToInt(geoPose.Longtitude - 100);
         }
 
         public static int GeoLocationToMeshCode2nd(GeoLocation geoPose)
         {
             return GeoLocationToMeshCode1st(geoPose) * 100
-                   + Mathf.FloorToInt(geoPose.Latitude * 12f % 8) * 10 + Mathf.FloorToInt((geoPose.Longtitude - 100f) * 8) % 8;
+                   + FloorToInt(geoPose.Latitude * 12f % 8) * 10 + FloorToInt((geoPose.Longtitude - 100f) * 8) % 8;
         }
 
         public static int GeoLocationToMeshCode3rd(GeoLocation geoPose)
         {
             return GeoLocationToMeshCode2nd(geoPose) * 100
-                   + Mathf.FloorToInt(geoPose.Latitude * 120f % 10) * 10 + Mathf.FloorToInt((geoPose.Longtitude - 100f) * 80) % 10;
+                   + FloorToInt(geoPose.Latitude * 120f % 10) * 10 + FloorToInt((geoPose.Longtitude - 100f) * 80) % 10;
         }
 
     }

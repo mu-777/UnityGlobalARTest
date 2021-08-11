@@ -20,13 +20,13 @@ namespace GlobalAR
     {
         public double Timestamp;
 
-        public float Latitude;
+        public double Latitude;
         public float VerticalError;
-        public float Longtitude;
+        public double Longtitude;
         public float HorizontalError;
         public float Altitude;
 
-        public GeoLocation(double timestamp, float latitude, float verticalError, float longtitude, float horizontalError, float altitude)
+        public GeoLocation(double timestamp, double latitude, float verticalError, double longtitude, float horizontalError, float altitude)
         {
             Timestamp = timestamp;
             Latitude = latitude;

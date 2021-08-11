@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "com.mu777.myunityutils": {
+      "version": "file:C:/Users/ryosuke/programs/unity/000_lib/MyUnityUtils",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {}
+    },
     "com.unity.collab-proxy": {
       "version": "1.2.16",
       "depth": 0,

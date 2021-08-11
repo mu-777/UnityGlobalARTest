@@ -1,3 +1,16 @@
-﻿{
-	"name": "mu-777.GlobalAR.Runtime"
+{
+    "name": "mu-777.GlobalAR.Runtime",
+    "references": [
+        "GUID:4eb890a8267a7c248b26ae139a9b2eb4",
+        "GUID:eba5dba96abb4ed41aeb3f9b4f40276b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

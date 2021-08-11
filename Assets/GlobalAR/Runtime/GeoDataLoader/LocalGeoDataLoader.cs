@@ -25,7 +25,7 @@ namespace GlobalAR
 
         private string FormatGMLFileName(GeoLocation geoPose)
         {
-            var meshCode3rd = GeoDataLoaderUtils.GeoLocationToMeshCode3rd(geoPose);
+            var meshCode3rd = GeoDataUtils.GeoLocationToMeshCode3rd(geoPose);
             return $"{meshCode3rd}_bldg_6697_op.gml";
         }
     }

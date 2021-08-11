@@ -44,9 +44,9 @@ namespace Tests
             geoPose.Latitude = lat;
             geoPose.Longtitude = lon;
 
-            Assert.AreEqual(GeoDataLoaderUtils.GeoLocationToMeshCode1st(geoPose), Mathf.FloorToInt(expected3rd * 0.0001f));
-            Assert.AreEqual(GeoDataLoaderUtils.GeoLocationToMeshCode2nd(geoPose), Mathf.FloorToInt(expected3rd * 0.01f));
-            Assert.AreEqual(GeoDataLoaderUtils.GeoLocationToMeshCode3rd(geoPose), expected3rd);
+            Assert.AreEqual(GeoDataUtils.GeoLocationToMeshCode1st(geoPose), Mathf.FloorToInt(expected3rd * 0.0001f));
+            Assert.AreEqual(GeoDataUtils.GeoLocationToMeshCode2nd(geoPose), Mathf.FloorToInt(expected3rd * 0.01f));
+            Assert.AreEqual(GeoDataUtils.GeoLocationToMeshCode3rd(geoPose), expected3rd);
         }
 
         [Test]

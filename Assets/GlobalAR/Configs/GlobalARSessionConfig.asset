@@ -10,12 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
-  m_Name: MockGeoLocationEstimatorConfig
-  m_EditorClassIdentifier: mu-777.GlobalAR.Runtime:GlobalAR:MockGeoLocationEstimatorConfig
-  MockData:
-    Timestamp: 0
-    Latitude: 35.529166
-    VerticalError: 0
-    Longtitude: 139.69375
-    HorizontalError: 0
-    Altitude: 3
+  m_Name: GlobalARSessionConfig
+  m_EditorClassIdentifier: mu-777.GlobalAR.Runtime:GlobalAR:GlobalARSessionConfig
+  GeoLocUpdateIntervalSec: 3
