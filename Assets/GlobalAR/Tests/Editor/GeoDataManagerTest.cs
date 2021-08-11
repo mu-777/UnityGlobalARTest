@@ -36,6 +36,31 @@ namespace Tests
             Assert.AreEqual(expectedFirstBuildingLod0Lon, geoData.buildings[0].lod1Solid[0][0].Longtitude, acceptableError);
         }
 
+        [TestCase(35.529166f, 139.69375f, TestName = "Kawasaki-eki")]
+        public void CachedGeoDataLoadTest(float lat, float lon)
+        {
+            var sw = new System.Diagnostics.Stopwatch();
+            var config = new LocalGeoDataLoaderConfig();
+            config.GmlDirPath = Path.GetFullPath("Assets/GlobalAR/Tests/Resources/GMLDir");
+
+            var geoDataLoader = new LocalGeoDataLoader(config);
+            var geoPose = new GeoLocation();
+            geoPose.Latitude = lat;
+            geoPose.Longtitude = lon;
+
+            sw.Start();
+            geoDataLoader.LoadGeoData(geoPose, out var geoData1);
+            sw.Stop();
+            var loadTime1 = sw.Elapsed;
+
+            sw.Restart();
+            geoDataLoader.LoadGeoData(geoPose, out var geoData2);
+            sw.Stop();
+            var loadTime2 = sw.Elapsed;
+            Assert.Less(loadTime2.Seconds, loadTime1.Seconds * 0.1f);
+            Assert.AreEqual(geoData1.buildings[0].buildingId, geoData2.buildings[0].buildingId);
+        }
+
         [TestCase(35.666863f, 139.74954f, 53394509, TestName = "Tranomon")]
         [TestCase(35.529166f, 139.69375f, 53392535, TestName = "Kawasaki-eki")]
         public void MeshCodeConvertTest(float lat, float lon, int expected3rd)
