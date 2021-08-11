@@ -9,13 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 472c303b544a629459e20fceec52dabd, type: 3}
   m_Name: MockGeoLocationEstimatorConfig
-  m_EditorClassIdentifier: mu-777.GlobalAR.Runtime:GlobalAR:MockGeoLocationEstimatorConfig
+  m_EditorClassIdentifier: 
   MockData:
     Timestamp: 0
-    Latitude: 35.529166
+    GeoPos:
+      Latitude: 35.529166
+      Longtitude: 139.69375
+      Altitude: 3
     VerticalError: 0
-    Longtitude: 139.69375
     HorizontalError: 0
-    Altitude: 3

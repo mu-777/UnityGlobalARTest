@@ -19,48 +19,40 @@ namespace GlobalAR
     }
 
     [System.Serializable]
-    public struct GeoLocation
+    public class GeoPosition
     {
-        public double Timestamp;
-
         public double Latitude;
-        public float VerticalError;
         public double Longtitude;
-        public float HorizontalError;
         public float Altitude;
 
-        public GeoLocation(double timestamp, double latitude, float verticalError, double longtitude, float horizontalError, float altitude)
+        public GeoPosition(double latitude, double longtitude, float altitude)
         {
-            Timestamp = timestamp;
-            Latitude = latitude;
-            VerticalError = verticalError;
-            Longtitude = longtitude ;
-            HorizontalError = horizontalError;
-            Altitude = altitude;
+            this.Latitude = latitude;
+            this.Longtitude = longtitude;
+            this.Altitude = altitude;
         }
-
         /// <summary>
         /// 指定した origin を原点とした位置をX,Y,Z(m)に変換します。
         /// </summary>
         /// <param name="origin">原点</param>
         /// <returns>左手系 Y-up (Xが東方向を正、Yが上方向を正、Zが北方向を正)</returns>
-        public Vector3 ToVector3(GeoLocation origin)
+        public Vector3 ToVector3(GeoPosition origin)
         {
             return new Vector3(
-                       -(float)(GeoLocation.Distance(origin.Latitude, this.Longtitude, origin.Latitude, origin.Longtitude) * Math.Sign(this.Longtitude - origin.Longtitude)),
+                       -(float)(GeoPosition.Distance(origin.Latitude, this.Longtitude, origin.Latitude, origin.Longtitude) * Math.Sign(this.Longtitude - origin.Longtitude)),
                        this.Altitude - origin.Altitude,
-                       (float)(GeoLocation.Distance(this.Latitude, origin.Longtitude, origin.Latitude, origin.Longtitude) * Math.Sign(Latitude - origin.Latitude))
+                       (float)(GeoPosition.Distance(this.Latitude, origin.Longtitude, origin.Latitude, origin.Longtitude) * Math.Sign(Latitude - origin.Latitude))
                    );
         }
 
-        public double Distance(GeoLocation loc)
+        public double Distance(GeoPosition pos)
         {
-            return GeoLocation.Distance(loc.Latitude, loc.Longtitude, this.Latitude, this.Longtitude);
+            return GeoPosition.Distance(pos.Latitude, pos.Longtitude, this.Latitude, this.Longtitude);
         }
 
-        static public double Distance(GeoLocation loc1, GeoLocation loc2)
+        static public double Distance(GeoPosition pos1, GeoPosition pos2)
         {
-            return GeoLocation.Distance(loc1.Latitude, loc1.Longtitude, loc2.Latitude, loc2.Longtitude);
+            return GeoPosition.Distance(pos1.Latitude, pos1.Longtitude, pos2.Latitude, pos2.Longtitude);
         }
 
         static public double Distance(double lat1, double lon1, double lat2, double lon2)
@@ -96,19 +88,64 @@ namespace GlobalAR
     }
 
     [System.Serializable]
+    public struct GeoLocation
+    {
+        public double Timestamp;
+        public GeoPosition GeoPos;
+        public float VerticalError;
+        public float HorizontalError;
+
+        public GeoLocation(double timestamp, GeoPosition geoPos, float verticalError, float horizontalError)
+        {
+            this.Timestamp = timestamp;
+            this.GeoPos = geoPos;
+            this.VerticalError = verticalError;
+            this.HorizontalError = horizontalError;
+        }
+    }
+
+    [System.Serializable]
+    public struct GeoSurface
+    {
+        public List<GeoPosition> Points;
+        public GeoSurface(List<GeoPosition> points)
+        {
+            this.Points = points;
+        }
+
+        public GeoPosition this[int idx]
+        {
+            set { this.Points[idx] = value; }
+            get { return this.Points[idx]; }
+        }
+    }
+
+    [System.Serializable]
     public struct GeoBuilding
     {
-        public string gmlId;
-        public string buildingId;
-        public List<GeoLocation> lod0FootPrint;
-        public List<List<GeoLocation>> lod1Solid;
+        public string GmlId;
+        public string BuildingId;
+        public GeoSurface Lod0FootPrint;
+        public List<GeoSurface> Lod1Solid;
     }
 
     [System.Serializable]
     public struct GeoData
     {
-        public GeoLocation lowerCorner;
-        public GeoLocation upperCorner;
-        public List<GeoBuilding> buildings;
+        /// <summary>
+        /// 3rd mesh code
+        /// </summary>
+        public int GeoMeshCode;
+        public GeoPosition LowerCorner;
+        public GeoPosition UpperCorner;
+        public List<GeoBuilding> Buildings;
+
+        public GeoData(int geoMeshCode, GeoPosition lowerCorner, GeoPosition upperCorner, List<GeoBuilding> buildings)
+        {
+            this.GeoMeshCode = geoMeshCode;
+            this.LowerCorner = lowerCorner;
+            this.UpperCorner = upperCorner;
+            this.Buildings = buildings;
+        }
     }
 }

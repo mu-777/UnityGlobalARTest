@@ -36,9 +36,9 @@ namespace GlobalAR
             _geoLoader = GeoDataLoaderFactory.Create(system, config);
         }
 
-        public void Update(GeoLocation currGeoPose)
+        public void Update(GeoPosition currGeoPos)
         {
-            var geoMeshCode = GeoDataUtils.GeoLocationToMeshCode3rd(currGeoPose);
+            var geoMeshCode = GeoDataUtils.GeoPositionToMeshCode3rd(currGeoPos);
 
             if(_geoDataCache.ContainsKey(geoMeshCode))
             {
@@ -54,6 +54,7 @@ namespace GlobalAR
                 }
             }
         }
+
         public void DestroySelf()
         {
             NewGeoDataLoadedEvent = null;
@@ -70,20 +71,20 @@ namespace GlobalAR
             return (int)(Math.Floor(x));
         }
 
-        public static int GeoLocationToMeshCode1st(GeoLocation geoPose)
+        public static int GeoPositionToMeshCode1st(GeoPosition geoPose)
         {
             return FloorToInt(geoPose.Latitude * 1.5) * 100 + FloorToInt(geoPose.Longtitude - 100);
         }
 
-        public static int GeoLocationToMeshCode2nd(GeoLocation geoPose)
+        public static int GeoPositionToMeshCode2nd(GeoPosition geoPose)
         {
-            return GeoLocationToMeshCode1st(geoPose) * 100
+            return GeoPositionToMeshCode1st(geoPose) * 100
                    + FloorToInt(geoPose.Latitude * 12f % 8) * 10 + FloorToInt((geoPose.Longtitude - 100f) * 8) % 8;
         }
 
-        public static int GeoLocationToMeshCode3rd(GeoLocation geoPose)
+        public static int GeoPositionToMeshCode3rd(GeoPosition geoPose)
         {
-            return GeoLocationToMeshCode2nd(geoPose) * 100
+            return GeoPositionToMeshCode2nd(geoPose) * 100
                    + FloorToInt(geoPose.Latitude * 120f % 10) * 10 + FloorToInt((geoPose.Longtitude - 100f) * 80) % 10;
         }
 

@@ -9,7 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 295d66c469465b84296d02daedcd51a8, type: 3}
   m_Name: GlobalARSessionConfig
-  m_EditorClassIdentifier: mu-777.GlobalAR.Runtime:GlobalAR:GlobalARSessionConfig
+  m_EditorClassIdentifier: 
   GeoLocUpdateIntervalSec: 3
+  GeoLocConvergenceErrThreshold: 0.1
+  CoordAlignmentTimeoutSec: 5

@@ -98,31 +98,4 @@ namespace GlobalAR
             return isSuccess;
         }
     }
-
-    public static class GeoLocationUtils
-    {
-        public const float EarthRadius = 6356752f;
-
-        /// <summary>
-        /// The diff should be small sufficiently.
-        /// X = west to east(lon), Y = to top, Z = south to north(lot)
-        /// TODO: http://www.thothchildren.com/chapter/5bd87bc651d930518903aa14
-        /// </summary>
-        /// <param name="origin"></param>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        public static Vector3 GeoLocationDiffToPos(GeoLocation origin, GeoLocation target)
-        {
-            var lon1 = origin.Longtitude * Math.PI / 180.0;
-            var lon2 = target.Longtitude * Math.PI / 180.0;
-            var lat1 = origin.Latitude * Math.PI / 180.0;
-            var lat2 = target.Latitude * Math.PI / 180.0;
-            var dlon = lon2 - lon1;
-            var dlat = lat2 - lat1;
-            return new Vector3(
-                       EarthRadius * (float)Math.Sin(dlon),
-                       target.Altitude - origin.Altitude,
-                       EarthRadius * (float)Math.Sin(dlat));
-        }
-    }
 }

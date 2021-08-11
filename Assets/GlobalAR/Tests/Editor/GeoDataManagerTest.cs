@@ -26,15 +26,13 @@ namespace Tests
 
             var geoDataLoader = new LocalGeoDataLoader(config);
 
-            var geoPose = new GeoLocation();
-            geoPose.Latitude = lat;
-            geoPose.Longtitude = lon;
-            Assert.AreEqual(geoDataLoader.LoadGeoData(GeoDataUtils.GeoLocationToMeshCode3rd(geoPose),
+            var geoPos = new GeoPosition(lat, lon, 0f);
+            Assert.AreEqual(geoDataLoader.LoadGeoData(GeoDataUtils.GeoPositionToMeshCode3rd(geoPos),
                                                       out var geoData), GARResult.SUCCESS);
-            Assert.AreEqual(expectedLowerCornerLat, geoData.lowerCorner.Latitude, acceptableError);
-            Assert.AreEqual(expectedFirstBuildingId, geoData.buildings[0].buildingId);
-            Assert.AreEqual(expectedFirstBuildingLod0Lon, geoData.buildings[0].lod0FootPrint[0].Longtitude, acceptableError);
-            Assert.AreEqual(expectedFirstBuildingLod0Lon, geoData.buildings[0].lod1Solid[0][0].Longtitude, acceptableError);
+            Assert.AreEqual(expectedLowerCornerLat, geoData.LowerCorner.Latitude, acceptableError);
+            Assert.AreEqual(expectedFirstBuildingId, geoData.Buildings[0].BuildingId);
+            Assert.AreEqual(expectedFirstBuildingLod0Lon, geoData.Buildings[0].Lod0FootPrint[0].Longtitude, acceptableError);
+            Assert.AreEqual(expectedFirstBuildingLod0Lon, geoData.Buildings[0].Lod1Solid[0][0].Longtitude, acceptableError);
         }
 
         [TestCase(35.529166f, 139.69375f, TestName = "Kawasaki-eki")]
@@ -46,20 +44,20 @@ namespace Tests
 
             GeoDataManager.Instance.Initialize(GeoDataLoaderSystem.Local, config);
 
-            var geoPose = new GeoLocation();
-            geoPose.Latitude = lat;
-            geoPose.Longtitude = lon;
+            var geoPos = new GeoPosition(lat, lon, 0f);
 
             sw.Start();
-            GeoDataManager.Instance.Update(geoPose);
+            GeoDataManager.Instance.Update(geoPos);
             sw.Stop();
             var loadTime1 = sw.Elapsed;
 
             sw.Restart();
-            GeoDataManager.Instance.Update(geoPose);
+            GeoDataManager.Instance.Update(geoPos);
             sw.Stop();
             var loadTime2 = sw.Elapsed;
             Assert.Less(loadTime2.Seconds, loadTime1.Seconds * 0.1f);
+
+            GeoDataManager.Instance.DestroySelf();
         }
 
         [TestCase(35.529166f, 139.69375f, 35.5229939f, 139.6914585f, TestName = "Kawasaki-eki_Hachonawate-eki")]
@@ -76,16 +74,14 @@ namespace Tests
                 Debug.Log($"NewGeoDataLoadedEvent: {++cnt}");
             };
 
-            var geoPose = new GeoLocation();
-            geoPose.Latitude = lat1;
-            geoPose.Longtitude = lon1;
-            GeoDataManager.Instance.Update(geoPose);
+            var geoPos = new GeoPosition(lat1, lon1, 0f);
+            GeoDataManager.Instance.Update(geoPos);
 
-            geoPose.Latitude = lat2;
-            geoPose.Longtitude = lon2;
-            GeoDataManager.Instance.Update(geoPose);
-
+            geoPos.Latitude = lat2;
+            geoPos.Longtitude = lon2;
+            GeoDataManager.Instance.Update(geoPos);
             Assert.AreEqual(2, cnt);
+            GeoDataManager.Instance.DestroySelf();
         }
 
 
@@ -94,13 +90,11 @@ namespace Tests
         [TestCase(35.529166f, 139.69375f, 53392535, TestName = "Kawasaki-eki")]
         public void MeshCodeConvertTest(float lat, float lon, int expected3rd)
         {
-            var geoPose = new GeoLocation();
-            geoPose.Latitude = lat;
-            geoPose.Longtitude = lon;
+            var geoPos = new GeoPosition(lat, lon, 0f);
 
-            Assert.AreEqual(GeoDataUtils.GeoLocationToMeshCode1st(geoPose), Mathf.FloorToInt(expected3rd * 0.0001f));
-            Assert.AreEqual(GeoDataUtils.GeoLocationToMeshCode2nd(geoPose), Mathf.FloorToInt(expected3rd * 0.01f));
-            Assert.AreEqual(GeoDataUtils.GeoLocationToMeshCode3rd(geoPose), expected3rd);
+            Assert.AreEqual(GeoDataUtils.GeoPositionToMeshCode1st(geoPos), Mathf.FloorToInt(expected3rd * 0.0001f));
+            Assert.AreEqual(GeoDataUtils.GeoPositionToMeshCode2nd(geoPos), Mathf.FloorToInt(expected3rd * 0.01f));
+            Assert.AreEqual(GeoDataUtils.GeoPositionToMeshCode3rd(geoPos), expected3rd);
         }
 
         [Test]

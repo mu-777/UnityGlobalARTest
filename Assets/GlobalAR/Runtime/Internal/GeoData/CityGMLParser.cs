@@ -9,48 +9,40 @@ namespace GlobalAR
     public class CityGMLParser
     {
         // posListString = "35.4719702241799 139.72718154727625 3.15 35.47199811382851 139.72712035483926 3.15 35.471962847883304 139.72709637967515 3.15 35.47193504838676 139.72715757197514 3.15 35.4719702241799 139.72718154727625 3.15"
-        private static List<GeoLocation> PosListStrToGeoLocList(string posListString, double timestamp)
+        private static List<GeoPosition> PosListStrToGeoPosList(string posListString)
         {
             return posListString.Split(' ')
             .Select((str, idx) => new { str, idx })
             .GroupBy(pair => pair.idx / 3)
             .Select(group => group.Select(pair => float.Parse(pair.str)))
-            .Select(point => new GeoLocation(timestamp,
-                                             point.ElementAt(0), 0.0f,
-                                             point.ElementAt(1), 0.0f,
-                                             point.ElementAt(2))).ToList();
+            .Select(point => new GeoPosition(point.ElementAt(0), point.ElementAt(1), point.ElementAt(2))).ToList();
         }
 
-        public static GARResult Parse(XElement gml, out GeoData data)
+        public static GARResult Parse(XElement gml, out GeoPosition lowerCorner, out GeoPosition upperCorner,
+                                      out List<GeoBuilding> buildings)
         {
-            var timestamp = 0.0;
-
-            data = new GeoData();
             var envelope = gml.Element(CityGMLNamespaces.gml + "boundedBy").Element(CityGMLNamespaces.gml + "Envelope");
-            data.lowerCorner = PosListStrToGeoLocList(envelope.Element(CityGMLNamespaces.gml + "lowerCorner").Value,
-                                                      timestamp)[0];
-            data.upperCorner = PosListStrToGeoLocList(envelope.Element(CityGMLNamespaces.gml + "upperCorner").Value,
-                                                      timestamp)[0];
-            data.buildings = new List<GeoBuilding>();
-            var buildings = gml.Elements(CityGMLNamespaces.core + "cityObjectMember").Select(el => el.Element(CityGMLNamespaces.bldg + "Building"));
-            foreach(var bldg in buildings)
+            lowerCorner = PosListStrToGeoPosList(envelope.Element(CityGMLNamespaces.gml + "lowerCorner").Value)[0];
+            upperCorner = PosListStrToGeoPosList(envelope.Element(CityGMLNamespaces.gml + "upperCorner").Value)[0];
+
+            buildings = new List<GeoBuilding>();
+            var bldgsNode = gml.Elements(CityGMLNamespaces.core + "cityObjectMember").Select(el => el.Element(CityGMLNamespaces.bldg + "Building"));
+            foreach(var bldgEl in bldgsNode)
             {
                 var buildingObj = new GeoBuilding();
-                buildingObj.gmlId = bldg.Attribute(CityGMLNamespaces.gml + "id").Value;
-                buildingObj.buildingId = bldg.Element(CityGMLNamespaces.gen + "stringAttribute")
-                                         .Element(CityGMLNamespaces.gen + "value").Value;
+                buildingObj.GmlId = bldgEl.Attribute(CityGMLNamespaces.gml + "id").Value;
+                buildingObj.BuildingId = bldgEl.Element(CityGMLNamespaces.gen + "stringAttribute").Element(CityGMLNamespaces.gen + "value").Value;
 
-                buildingObj.lod0FootPrint = PosListStrToGeoLocList(bldg.Element(CityGMLNamespaces.bldg + "lod0FootPrint")
-                                                                   .Descendants()
-                                                                   .Where(el => (el.Name == CityGMLNamespaces.gml + "posList"))
-                                                                   .ElementAt(0).Value,
-                                                                   timestamp);
+                buildingObj.Lod0FootPrint = new GeoSurface(PosListStrToGeoPosList(bldgEl.Element(CityGMLNamespaces.bldg + "lod0FootPrint")
+                                                                                  .Descendants()
+                                                                                  .Where(el => (el.Name == CityGMLNamespaces.gml + "posList"))
+                                                                                  .ElementAt(0).Value));
 
-                buildingObj.lod1Solid = bldg.Element(CityGMLNamespaces.bldg + "lod1Solid")
+                buildingObj.Lod1Solid = bldgEl.Element(CityGMLNamespaces.bldg + "lod1Solid")
                                         .Descendants()
                                         .Where(el => (el.Name == CityGMLNamespaces.gml + "posList"))
-                                        .Select(el => PosListStrToGeoLocList(el.Value, timestamp)).ToList();
-                data.buildings.Add(buildingObj);
+                                        .Select(el => new GeoSurface(PosListStrToGeoPosList(el.Value))).ToList();
+                buildings.Add(buildingObj);
             }
             return GARResult.SUCCESS;
         }

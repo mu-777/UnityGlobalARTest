@@ -116,7 +116,7 @@ namespace GlobalAR
                 yield return yielder;
                 if(GeoLocationManager.Instance.IsLocalized)
                 {
-                    GeoDataManager.Instance.Update(GeoLocationManager.Instance.CurrGeoPose);
+                    GeoDataManager.Instance.Update(GeoLocationManager.Instance.CurrGeoPose.GeoPos);
                 }
             }
         }

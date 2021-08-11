@@ -19,7 +19,10 @@ namespace GlobalAR
         public GARResult LoadGeoData(int geoMeshCode3rd, out GeoData data)
         {
             var gml = XElement.Load(FormatGMLFilePath(geoMeshCode3rd));
-            var res = CityGMLParser.Parse(gml, out data);
+            var res = CityGMLParser.Parse(gml,
+                                          out GeoPosition lowerCorner, out GeoPosition upperCorner,
+                                          out List<GeoBuilding> buildings);
+            data = new GeoData(geoMeshCode3rd, lowerCorner, upperCorner, buildings);
             return res;
         }
 
