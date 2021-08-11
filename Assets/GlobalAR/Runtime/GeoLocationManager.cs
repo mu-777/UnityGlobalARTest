@@ -45,6 +45,11 @@ namespace GlobalAR
             _geoLocEstimator = GeoLocationEstimatorFactory.Create(system, config);
         }
 
+        public void DestroySelf()
+        {
+            _instance = null;
+        }
+
         public bool EstimateGeoLocation(out GeoLocation geoPose, out Pose localPose)
         {
             if(_geoLocEstimator.EstimateGeoLocation(out var tempGeoPose, out var tempLocalPose) != GARResult.SUCCESS)

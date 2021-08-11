@@ -46,7 +46,6 @@ namespace Tests
 
             GeoDataManager.Instance.Initialize(GeoDataLoaderSystem.Local, config);
 
-            var geoDataLoader = new LocalGeoDataLoader(config);
             var geoPose = new GeoLocation();
             geoPose.Latitude = lat;
             geoPose.Longtitude = lon;
@@ -62,6 +61,34 @@ namespace Tests
             var loadTime2 = sw.Elapsed;
             Assert.Less(loadTime2.Seconds, loadTime1.Seconds * 0.1f);
         }
+
+        [TestCase(35.529166f, 139.69375f, 35.5229939f, 139.6914585f, TestName = "Kawasaki-eki_Hachonawate-eki")]
+        public void NewGeoDataLoadedTest(float lat1, float lon1, float lat2, float lon2)
+        {
+            var cnt = 0;
+
+            var config = new LocalGeoDataLoaderConfig();
+            config.GmlDirPath = Path.GetFullPath("Assets/GlobalAR/Tests/Resources/GMLDir");
+
+            GeoDataManager.Instance.Initialize(GeoDataLoaderSystem.Local, config);
+            GeoDataManager.Instance.NewGeoDataLoadedEvent += (GeoData data) =>
+            {
+                Debug.Log($"NewGeoDataLoadedEvent: {++cnt}");
+            };
+
+            var geoPose = new GeoLocation();
+            geoPose.Latitude = lat1;
+            geoPose.Longtitude = lon1;
+            GeoDataManager.Instance.Update(geoPose);
+
+            geoPose.Latitude = lat2;
+            geoPose.Longtitude = lon2;
+            GeoDataManager.Instance.Update(geoPose);
+
+            Assert.AreEqual(2, cnt);
+        }
+
+
 
         [TestCase(35.666863f, 139.74954f, 53394509, TestName = "Tranomon")]
         [TestCase(35.529166f, 139.69375f, 53392535, TestName = "Kawasaki-eki")]

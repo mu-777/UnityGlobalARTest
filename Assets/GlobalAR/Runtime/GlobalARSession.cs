@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace GlobalAR
 {
@@ -14,13 +15,26 @@ namespace GlobalAR
         public GeoDataLoaderSystem geoDataLoaderSystem;
         public ScriptableObject geoDataLoaderConfig;
         
+        [System.Serializable]
+        public class NewGeoDataLoadedEvent : UnityEvent<GeoData> { };
+        public NewGeoDataLoadedEvent OnNewGeoDataLoaded;
+
         private GeoDataManager _geoDataManager;
 
         void Awake()
         {
             GlobalARSessionManager.Instance.CreateSession(this);
+
             GeoLocationManager.Instance.Initialize(geoLocationEstimatorSystem, geoLocationEstimatorConfig);
+
             GeoDataManager.Instance.Initialize(geoDataLoaderSystem, geoDataLoaderConfig);
+            GeoDataManager.Instance.NewGeoDataLoadedEvent += (GeoData result) =>
+            {
+                if(OnNewGeoDataLoaded != null)
+                {
+                    OnNewGeoDataLoaded.Invoke(result);
+                }
+            };
         }
 
         void OnEnable()
@@ -36,6 +50,13 @@ namespace GlobalAR
         void Update()
         {
             GlobalARSessionManager.Instance.UpdateSession();
+        }
+
+        void OnDestroy()
+        {
+            GlobalARSessionManager.Instance.DestroySession();
+            GeoLocationManager.Instance.DestroySelf();
+            GeoDataManager.Instance.DestroySelf();
         }
     }
 }

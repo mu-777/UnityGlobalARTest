@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace GlobalAR
@@ -18,6 +19,9 @@ namespace GlobalAR
                 return _instance;
             }
         }
+
+        public Action<GeoData> NewGeoDataLoadedEvent;
+        public List<GeoData> AllGeoData { get { return _geoDataCache.Values.ToList(); } }
 
         private IGeoDataLoader _geoLoader;
         private Dictionary<int, GeoData> _geoDataCache;
@@ -44,7 +48,16 @@ namespace GlobalAR
             if(_geoLoader.LoadGeoData(geoMeshCode, out var data) == GARResult.SUCCESS)
             {
                 _geoDataCache.Add(geoMeshCode, data);
+                if(NewGeoDataLoadedEvent != null)
+                {
+                    NewGeoDataLoadedEvent.Invoke(data);
+                }
             }
+        }
+        public void DestroySelf()
+        {
+            NewGeoDataLoadedEvent = null;
+            _instance = null;
         }
     }
 
