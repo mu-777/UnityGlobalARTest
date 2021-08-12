@@ -9,7 +9,7 @@ using GlobalAR;
 
 namespace Tests
 {
-    public class GeoDataManagerTest
+    public class GeoDataTest
     {
         private readonly float acceptableError = 0.000001f;
 

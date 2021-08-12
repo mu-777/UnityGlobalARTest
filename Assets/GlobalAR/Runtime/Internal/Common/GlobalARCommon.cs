@@ -40,7 +40,7 @@ namespace GlobalAR
         public Vector3 ToVector3(GeoPosition origin)
         {
             return new Vector3(
-                       -(float)(GeoPosition.Distance(origin.Latitude, this.Longtitude, origin.Latitude, origin.Longtitude) * Math.Sign(this.Longtitude - origin.Longtitude)),
+                       (float)(GeoPosition.Distance(origin.Latitude, this.Longtitude, origin.Latitude, origin.Longtitude) * Math.Sign(this.Longtitude - origin.Longtitude)),
                        this.Altitude - origin.Altitude,
                        (float)(GeoPosition.Distance(this.Latitude, origin.Longtitude, origin.Latitude, origin.Longtitude) * Math.Sign(this.Latitude - origin.Latitude))
                    );

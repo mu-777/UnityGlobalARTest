@@ -28,7 +28,7 @@ namespace GlobalAR
         private Pose _currLocalPose;
 
         public GeoPosition OriginInGeoCoord { get { return _originInGeoCoord; } }
-        private GeoPosition _originInGeoCoord = new GeoPosition(35.529166, 139.69375, 0f); // TODO
+        private GeoPosition _originInGeoCoord = new GeoPosition(35.531664234319436, 139.69824465760138, 2.07f); // TODO: This is temp(14130-bldg-245435)
 
         public Pose CurrLocalPose { get { return _currLocalPose; } }
         public bool IsLocalized { get; private set; }

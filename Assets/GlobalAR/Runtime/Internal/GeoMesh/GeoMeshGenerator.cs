@@ -69,10 +69,10 @@ namespace GlobalAR
         private static void UpdateMeshData(int prevIdx, int targetIdx, int nextIdx, List<Vector3> leftVerts,
                                            ref List<Vector3> vertices, ref List<int> indices, ref List<Vector3> normals)
         {
-            vertices.AddRange(new Vector3[] { leftVerts[prevIdx], leftVerts[targetIdx], leftVerts[nextIdx] });
+            vertices.AddRange(new Vector3[] { leftVerts[targetIdx], leftVerts[prevIdx], leftVerts[nextIdx] });
             indices.AddRange(new int[] { vertices.Count - 3, vertices.Count - 2, vertices.Count - 1 });
 
-            var normal = -GetSerfDirection(prevIdx, targetIdx, nextIdx, leftVerts);
+            var normal = GetSerfDirection(prevIdx, targetIdx, nextIdx, leftVerts);
             normals.AddRange(new Vector3[] { normal, normal, normal });
         }
 
