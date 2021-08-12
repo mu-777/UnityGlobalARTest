@@ -33,18 +33,24 @@ namespace GlobalAR
                 buildingObj.GmlId = bldgEl.Attribute(CityGMLNamespaces.gml + "id").Value;
                 buildingObj.BuildingId = bldgEl.Element(CityGMLNamespaces.gen + "stringAttribute").Element(CityGMLNamespaces.gen + "value").Value;
 
-                buildingObj.Lod0FootPrint = new GeoSurface(PosListStrToGeoPosList(bldgEl.Element(CityGMLNamespaces.bldg + "lod0FootPrint")
-                                                                                  .Descendants()
-                                                                                  .Where(el => (el.Name == CityGMLNamespaces.gml + "posList"))
-                                                                                  .ElementAt(0).Value));
-
+                buildingObj.Lod0FootPrint = new GeoSurface(RemoveLastItem(PosListStrToGeoPosList(bldgEl.Element(CityGMLNamespaces.bldg + "lod0FootPrint")
+                                                                                                 .Descendants()
+                                                                                                 .Where(el => (el.Name == CityGMLNamespaces.gml + "posList"))
+                                                                                                 .ElementAt(0).Value)));
+                buildingObj.LocalOriginInGeoCoord = buildingObj.Lod0FootPrint[0];
                 buildingObj.Lod1Solid = bldgEl.Element(CityGMLNamespaces.bldg + "lod1Solid")
                                         .Descendants()
                                         .Where(el => (el.Name == CityGMLNamespaces.gml + "posList"))
-                                        .Select(el => new GeoSurface(PosListStrToGeoPosList(el.Value))).ToList();
+                                        .Select(el => new GeoSurface(RemoveLastItem(PosListStrToGeoPosList(el.Value)))).ToList();
                 buildings.Add(buildingObj);
             }
             return GARResult.SUCCESS;
+        }
+
+        private static List<T> RemoveLastItem<T>(List<T> src)
+        {
+            src.RemoveAt(src.Count - 1);
+            return src;
         }
     }
 

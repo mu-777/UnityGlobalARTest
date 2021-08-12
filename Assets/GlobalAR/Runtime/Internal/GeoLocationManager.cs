@@ -23,8 +23,13 @@ namespace GlobalAR
 
         private IGeoLocationEstimator _geoLocEstimator;
         private GeoLocation _currGeoPose;
+
         public GeoLocation CurrGeoPose { get { return _currGeoPose; } }
         private Pose _currLocalPose;
+
+        public GeoPosition OriginInGeoCoord { get { return _originInGeoCoord; } }
+        private GeoPosition _originInGeoCoord = new GeoPosition(35.529166, 139.69375, 0f); // TODO
+
         public Pose CurrLocalPose { get { return _currLocalPose; } }
         public bool IsLocalized { get; private set; }
 
@@ -89,11 +94,6 @@ namespace GlobalAR
                 }
                 await Task.Delay(intervalMSec);
                 cnt++;
-            }
-            if(!isSuccess)
-            {
-                Debug.LogWarning("fail to align coordinates");
-                return isSuccess;
             }
             return isSuccess;
         }

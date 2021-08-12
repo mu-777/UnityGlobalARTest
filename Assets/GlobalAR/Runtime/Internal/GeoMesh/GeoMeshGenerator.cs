@@ -8,13 +8,16 @@ namespace GlobalAR
     public static class GeoMeshGenerator
     {
         // https://edom18.hateblo.jp/entry/2018/03/25/100234
-        public static bool GeoSurfaceToMesh(GeoSurface surface, GeoPosition origin, out List<Vector3> vertices, out List<int> indices)
+        public static bool GeoSurfaceToMesh(GeoSurface surface, GeoPosition origin,
+                                            out List<Vector3> vertices, out List<int> indices, out List<Vector3> normals)
         {
             vertices = new List<Vector3>();
             indices = new List<int>();
+            normals = new List<Vector3>();
 
             var leftVerts = surface.Points.Select(pt => pt.ToVector3(origin)).ToList();
             var targetIdx = 0;
+            var isLooped = false;
             while(leftVerts.Count > 3)
             {
                 targetIdx = FindFarthestIdx(leftVerts);
@@ -24,30 +27,53 @@ namespace GlobalAR
 
                 if(!CheckPointInTriangle(prevIdx, targetIdx, nextIdx, leftVerts))
                 {
-                    vertices.AddRange(new Vector3[] { leftVerts[prevIdx], leftVerts[targetIdx], leftVerts[nextIdx] });
-                    indices.AddRange(new int[] { vertices.Count - 3, vertices.Count - 2, vertices.Count - 1 });
+                    UpdateMeshData(prevIdx, targetIdx, nextIdx, leftVerts,
+                                   ref vertices, ref indices, ref normals);
                     leftVerts.RemoveAt(targetIdx);
                     continue;
                 }
 
+                var startIdx = targetIdx;
                 while(true)
                 {
                     targetIdx = nextIdx;
+                    if(targetIdx == startIdx)
+                    {
+                        isLooped = true;
+                        break;
+                    }
                     prevIdx = PrevIdx(targetIdx, leftVerts);
                     nextIdx = NextIdx(targetIdx, leftVerts);
                     var dir2 = GetSerfDirection(prevIdx, targetIdx, nextIdx, leftVerts);
                     if((Vector3.Dot(dir, dir2) > 0f) && !CheckPointInTriangle(prevIdx, targetIdx, nextIdx, leftVerts))
                     {
-                        vertices.AddRange(new Vector3[] { leftVerts[prevIdx], leftVerts[targetIdx], leftVerts[nextIdx] });
-                        indices.AddRange(new int[] { vertices.Count - 3, vertices.Count - 2, vertices.Count - 1 });
+                        UpdateMeshData(prevIdx, targetIdx, nextIdx, leftVerts,
+                                       ref vertices, ref indices, ref normals);
                         leftVerts.RemoveAt(targetIdx);
                         break;
                     }
                 }
+                if(isLooped)
+                {
+                    break;
+                }
             }
-            vertices.AddRange(leftVerts);
-            indices.AddRange(new int[] { vertices.Count - 3, vertices.Count - 2, vertices.Count - 1 });
+            if(leftVerts.Count != 3)
+            {
+                return false;
+            }
+            UpdateMeshData(0, 1, 2, leftVerts, ref vertices, ref indices, ref normals);
             return true;
+        }
+
+        private static void UpdateMeshData(int prevIdx, int targetIdx, int nextIdx, List<Vector3> leftVerts,
+                                           ref List<Vector3> vertices, ref List<int> indices, ref List<Vector3> normals)
+        {
+            vertices.AddRange(new Vector3[] { leftVerts[prevIdx], leftVerts[targetIdx], leftVerts[nextIdx] });
+            indices.AddRange(new int[] { vertices.Count - 3, vertices.Count - 2, vertices.Count - 1 });
+
+            var normal = -GetSerfDirection(prevIdx, targetIdx, nextIdx, leftVerts);
+            normals.AddRange(new Vector3[] { normal, normal, normal });
         }
 
         private static int NextIdx(int targetIdx, List<Vector3> leftVerts)

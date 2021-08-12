@@ -31,6 +31,7 @@ namespace GlobalAR
             this.Longtitude = longtitude;
             this.Altitude = altitude;
         }
+
         /// <summary>
         /// 指定した origin を原点とした位置をX,Y,Z(m)に変換します。
         /// </summary>
@@ -41,7 +42,7 @@ namespace GlobalAR
             return new Vector3(
                        -(float)(GeoPosition.Distance(origin.Latitude, this.Longtitude, origin.Latitude, origin.Longtitude) * Math.Sign(this.Longtitude - origin.Longtitude)),
                        this.Altitude - origin.Altitude,
-                       (float)(GeoPosition.Distance(this.Latitude, origin.Longtitude, origin.Latitude, origin.Longtitude) * Math.Sign(Latitude - origin.Latitude))
+                       (float)(GeoPosition.Distance(this.Latitude, origin.Longtitude, origin.Latitude, origin.Longtitude) * Math.Sign(this.Latitude - origin.Latitude))
                    );
         }
 
@@ -125,6 +126,7 @@ namespace GlobalAR
     {
         public string GmlId;
         public string BuildingId;
+        public GeoPosition LocalOriginInGeoCoord;
         public GeoSurface Lod0FootPrint;
         public List<GeoSurface> Lod1Solid;
     }
