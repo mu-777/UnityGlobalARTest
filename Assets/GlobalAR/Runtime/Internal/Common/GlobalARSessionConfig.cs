@@ -13,7 +13,7 @@ namespace GlobalAR
         private static void Create()
         {
             var confData = CreateInstance<GlobalARSessionConfig>();
-            var assetName = $"{GlobalARCommon.AssetPath}/GlobalARSessionConfig.asset";
+            var assetName = $"{GARCommon.AssetPath}/GlobalARSessionConfig.asset";
             AssetDatabase.CreateAsset(confData, assetName);
             AssetDatabase.Refresh();
         }

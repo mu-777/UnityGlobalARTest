@@ -78,13 +78,12 @@ namespace GlobalAR
 
         private static int NextIdx(int targetIdx, List<Vector3> leftVerts)
         {
-            return (targetIdx + 1) % leftVerts.Count;
+            return GARUtils.Mod(targetIdx + 1, leftVerts.Count);
         }
 
         private static int PrevIdx(int targetIdx, List<Vector3> leftVerts)
         {
-            var ret = (targetIdx - 1) % leftVerts.Count;
-            return (ret < 0) ? (leftVerts.Count + ret) % leftVerts.Count : ret;
+            return GARUtils.Mod(targetIdx - 1, leftVerts.Count);
         }
 
         private static int FindFarthestIdx(List<Vector3> leftVerts)

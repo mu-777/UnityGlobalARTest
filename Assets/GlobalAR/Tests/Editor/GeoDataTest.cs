@@ -84,8 +84,6 @@ namespace Tests
             GeoDataManager.Instance.DestroySelf();
         }
 
-
-
         [TestCase(35.666863f, 139.74954f, 53394509, TestName = "Tranomon")]
         [TestCase(35.529166f, 139.69375f, 53392535, TestName = "Kawasaki-eki")]
         public void MeshCodeConvertTest(float lat, float lon, int expected3rd)
@@ -96,6 +94,38 @@ namespace Tests
             Assert.AreEqual(GeoDataUtils.GeoPositionToMeshCode2nd(geoPos), Mathf.FloorToInt(expected3rd * 0.01f));
             Assert.AreEqual(GeoDataUtils.GeoPositionToMeshCode3rd(geoPos), expected3rd);
         }
+
+        [TestCase(533925, 1, 0, 533915)]
+        [TestCase(533925, -1, 0, 533935)]
+        [TestCase(533925, 10, 0, 523905)]
+        [TestCase(533925, -10, 0, 543945)]
+        [TestCase(533925, 15, 0, 513935)]
+        [TestCase(533925, -15, 0, 553915)]
+        [TestCase(533925, 0, 1, 533926)]
+        [TestCase(533925, 0, -1, 533924)]
+        [TestCase(533925, 0, 10, 534027)]
+        [TestCase(533925, 0, -10, 533823)]
+        [TestCase(533925, 0, 15, 534124)]
+        [TestCase(533925, 0, -15, 533726)]
+        [TestCase(53392535, 1, 0, 53392525)]
+        [TestCase(53392535, -1, 0, 53392545)]
+        [TestCase(53392535, 0, 1, 53392536)]
+        [TestCase(53392535, 0, -1, 53392534)]
+        [TestCase(53392535, 10, 0, 53391535)]
+        [TestCase(53392535, -10, 0, 53393535)]
+        [TestCase(53392535, 0, 10, 53392635)]
+        [TestCase(53392535, 0, -10, 53392435)]
+        [TestCase(53392535, 15, 0, 53390585)]
+        [TestCase(53392535, -15, 0, 53393585)]
+        [TestCase(53392535, 0, 15, 53392730)]
+        [TestCase(53392535, 0, -15, 53392430)]
+        public void MeshCodeOffsetTest(int baseCode, int offsetDown, int offsetRight, int expectedCode)
+        {
+            Assert.IsTrue(GeoDataUtils.OffsetMeshCode(baseCode, offsetDown, offsetRight, out var actualCode));
+            Assert.AreEqual(expectedCode, actualCode);
+        }
+
+
 
         [Test]
         public void GetPathTest()

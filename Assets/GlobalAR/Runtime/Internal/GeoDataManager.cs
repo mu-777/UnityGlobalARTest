@@ -21,9 +21,11 @@ namespace GlobalAR
         }
 
         public Action<GeoData> NewGeoDataLoadedEvent;
+        public Action<int> GeoDataRemovedEvent;
         public List<GeoData> AllGeoData { get { return _geoDataCache.Values.ToList(); } }
 
         private IGeoDataLoader _geoLoader;
+        private int _currGeoMeshCode = 0;
         private Dictionary<int, GeoData> _geoDataCache;
 
         private GeoDataManager()
@@ -40,6 +42,36 @@ namespace GlobalAR
         {
             var geoMeshCode = GeoDataUtils.GeoPositionToMeshCode3rd(currGeoPos);
 
+            if(_currGeoMeshCode == geoMeshCode)
+            {
+                return;
+            }
+            _currGeoMeshCode = geoMeshCode;
+            LoadGeoData(_currGeoMeshCode);
+
+            var loadingCodes = new List<int>();
+            for(var i = -1; i < 2; i++)
+            {
+                for(var j = -1; j < 2; j++)
+                {
+                    if(GeoDataUtils.OffsetMeshCode(_currGeoMeshCode, i, j, out var offsetedCode))
+                    {
+                        loadingCodes.Add(offsetedCode);
+                        LoadGeoData(offsetedCode);
+                    }
+                }
+            }
+            foreach(var code in _geoDataCache.Keys)
+            {
+                if (!loadingCodes.Contains(code))
+                {
+                    UnloadGeoData(code);
+                }
+            }
+        }
+
+        private void LoadGeoData(int geoMeshCode)
+        {
             if(_geoDataCache.ContainsKey(geoMeshCode))
             {
                 return;
@@ -55,38 +87,24 @@ namespace GlobalAR
             }
         }
 
+        private void UnloadGeoData(int geoMeshCode)
+        {
+            if(!_geoDataCache.ContainsKey(geoMeshCode))
+            {
+                return;
+            }
+            _geoDataCache.Remove(geoMeshCode);
+            if(GeoDataRemovedEvent != null)
+            {
+                GeoDataRemovedEvent.Invoke(geoMeshCode);
+            }
+        }
+
         public void DestroySelf()
         {
             NewGeoDataLoadedEvent = null;
+            GeoDataRemovedEvent = null;
             _instance = null;
         }
-    }
-
-    //ref: https://tech.atware.co.jp/mesh-system/
-    //ref: https://qiita.com/yuusei/items/549402a80efd7e7192ef
-    public static class GeoDataUtils
-    {
-        private static int FloorToInt(double x)
-        {
-            return (int)(Math.Floor(x));
-        }
-
-        public static int GeoPositionToMeshCode1st(GeoPosition geoPose)
-        {
-            return FloorToInt(geoPose.Latitude * 1.5) * 100 + FloorToInt(geoPose.Longtitude - 100);
-        }
-
-        public static int GeoPositionToMeshCode2nd(GeoPosition geoPose)
-        {
-            return GeoPositionToMeshCode1st(geoPose) * 100
-                   + FloorToInt(geoPose.Latitude * 12f % 8) * 10 + FloorToInt((geoPose.Longtitude - 100f) * 8) % 8;
-        }
-
-        public static int GeoPositionToMeshCode3rd(GeoPosition geoPose)
-        {
-            return GeoPositionToMeshCode2nd(geoPose) * 100
-                   + FloorToInt(geoPose.Latitude * 120f % 10) * 10 + FloorToInt((geoPose.Longtitude - 100f) * 80) % 10;
-        }
-
     }
 }

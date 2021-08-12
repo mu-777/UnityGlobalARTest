@@ -11,7 +11,7 @@ namespace GlobalAR
         private static void Create()
         {
             var confData = CreateInstance<MockGeoLocationEstimatorConfig>();
-            var assetName = $"{GlobalARCommon.AssetPath}/MockGeoLocationEstimatorConfig.asset";
+            var assetName = $"{GARCommon.AssetPath}/MockGeoLocationEstimatorConfig.asset";
             AssetDatabase.CreateAsset(confData, assetName);
             AssetDatabase.Refresh();
         }

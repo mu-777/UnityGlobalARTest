@@ -12,7 +12,7 @@ namespace GlobalAR
         private static void Create()
         {
             var confData = CreateInstance<LocalGeoDataLoaderConfig>();
-            var assetName = $"{GlobalARCommon.AssetPath}/LocalGeoDataLoaderConfig.asset";
+            var assetName = $"{GARCommon.AssetPath}/LocalGeoDataLoaderConfig.asset";
             AssetDatabase.CreateAsset(confData, assetName);
             AssetDatabase.Refresh();
         }

@@ -76,9 +76,16 @@ namespace GlobalAR
 
             GeoDataManager.Instance.NewGeoDataLoadedEvent += (GeoData result) =>
             {
-                if (_sessionComponent.OnNewGeoDataLoaded != null)
+                if(_sessionComponent.OnNewGeoDataLoaded != null)
                 {
                     _sessionComponent.OnNewGeoDataLoaded.Invoke(result);
+                }
+            };
+            GeoDataManager.Instance.GeoDataRemovedEvent += (int geoMeshCode) =>
+            {
+                if(_sessionComponent.OnGeoDataRemoved != null)
+                {
+                    _sessionComponent.OnGeoDataRemoved.Invoke(geoMeshCode);
                 }
             };
         }

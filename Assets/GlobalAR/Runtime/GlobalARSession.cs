@@ -14,10 +14,14 @@ namespace GlobalAR
 
         public GeoDataLoaderSystem geoDataLoaderSystem;
         public ScriptableObject geoDataLoaderConfig;
-        
+
         [System.Serializable]
         public class NewGeoDataLoadedEvent : UnityEvent<GeoData> { };
         public NewGeoDataLoadedEvent OnNewGeoDataLoaded;
+
+        [System.Serializable]
+        public class GeoDataRemovedEvent : UnityEvent<int> { };
+        public GeoDataRemovedEvent OnGeoDataRemoved;
 
         private GeoDataManager _geoDataManager;
 
