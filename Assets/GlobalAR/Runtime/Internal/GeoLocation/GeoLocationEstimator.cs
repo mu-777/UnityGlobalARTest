@@ -12,7 +12,9 @@ namespace GlobalAR
 
     public interface IGeoLocationEstimator
     {
+        GARResult GetGPSPose(out GeoLocation geoPose);
         GARResult EstimateGeoLocation(out GeoLocation geoPose, out Pose localPose);
+        void Update();
     }
 
     public class GeoLocationEstimatorFactory

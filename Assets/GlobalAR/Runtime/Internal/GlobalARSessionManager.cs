@@ -74,6 +74,13 @@ namespace GlobalAR
                 }
             }
 
+            GeoLocationManager.Instance.GeoLocationUpdatedEvent += (Vector3 result) =>
+            {
+                if(_sessionComponent.OnGeoLocationUpdated != null)
+                {
+                    _sessionComponent.OnGeoLocationUpdated.Invoke(result);
+                }
+            };
             GeoDataManager.Instance.NewGeoDataLoadedEvent += (GeoData result) =>
             {
                 if(_sessionComponent.OnNewGeoDataLoaded != null)
@@ -106,7 +113,8 @@ namespace GlobalAR
 
         internal void UpdateSession()
         {
-
+            GeoLocationManager.Instance.Update();
+            GeoDataManager.Instance.Update();
         }
 
         internal void DestroySession()
@@ -123,7 +131,7 @@ namespace GlobalAR
                 yield return yielder;
                 if(GeoLocationManager.Instance.IsLocalized)
                 {
-                    GeoDataManager.Instance.Update(GeoLocationManager.Instance.CurrGeoPose.GeoPos);
+                    GeoDataManager.Instance.LoadGeoDataIfNeeded(GeoLocationManager.Instance.CurrGeoPose.GeoPos);
                 }
             }
         }

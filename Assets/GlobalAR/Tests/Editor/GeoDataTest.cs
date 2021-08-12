@@ -47,12 +47,12 @@ namespace Tests
             var geoPos = new GeoPosition(lat, lon, 0f);
 
             sw.Start();
-            GeoDataManager.Instance.Update(geoPos);
+            GeoDataManager.Instance.LoadGeoDataIfNeeded(geoPos);
             sw.Stop();
             var loadTime1 = sw.Elapsed;
 
             sw.Restart();
-            GeoDataManager.Instance.Update(geoPos);
+            GeoDataManager.Instance.LoadGeoDataIfNeeded(geoPos);
             sw.Stop();
             var loadTime2 = sw.Elapsed;
             Assert.Less(loadTime2.Seconds, loadTime1.Seconds * 0.1f);
@@ -75,11 +75,11 @@ namespace Tests
             };
 
             var geoPos = new GeoPosition(lat1, lon1, 0f);
-            GeoDataManager.Instance.Update(geoPos);
+            GeoDataManager.Instance.LoadGeoDataIfNeeded(geoPos);
 
             geoPos.Latitude = lat2;
             geoPos.Longtitude = lon2;
-            GeoDataManager.Instance.Update(geoPos);
+            GeoDataManager.Instance.LoadGeoDataIfNeeded(geoPos);
             Assert.AreEqual(2, cnt);
             GeoDataManager.Instance.DestroySelf();
         }

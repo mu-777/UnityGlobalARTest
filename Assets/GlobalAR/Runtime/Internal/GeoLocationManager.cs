@@ -21,6 +21,8 @@ namespace GlobalAR
             }
         }
 
+        public Action<Vector3> GeoLocationUpdatedEvent;
+
         private IGeoLocationEstimator _geoLocEstimator;
         private GeoLocation _currGeoPose;
 
@@ -28,7 +30,7 @@ namespace GlobalAR
         private Pose _currLocalPose;
 
         public GeoPosition OriginInGeoCoord { get { return _originInGeoCoord; } }
-        private GeoPosition _originInGeoCoord = new GeoPosition(35.531664234319436, 139.69824465760138, 2.07f); // TODO: This is temp(14130-bldg-245435)
+        private GeoPosition _originInGeoCoord;
 
         public Pose CurrLocalPose { get { return _currLocalPose; } }
         public bool IsLocalized { get; private set; }
@@ -50,6 +52,11 @@ namespace GlobalAR
             _geoLocEstimator = GeoLocationEstimatorFactory.Create(system, config);
         }
 
+        public void Update()
+        {
+            _geoLocEstimator.Update();
+        }
+
         public void DestroySelf()
         {
             _instance = null;
@@ -57,6 +64,12 @@ namespace GlobalAR
 
         public bool EstimateGeoLocation(out GeoLocation geoPose, out Pose localPose)
         {
+            if(!IsLocalized)
+            {
+                geoPose = _currGeoPose;
+                localPose = _currLocalPose;
+                return false;
+            }
             if(_geoLocEstimator.EstimateGeoLocation(out var tempGeoPose, out var tempLocalPose) != GARResult.SUCCESS)
             {
                 geoPose = _currGeoPose;
@@ -65,27 +78,41 @@ namespace GlobalAR
             };
             geoPose = _currGeoPose = tempGeoPose;
             localPose = _currLocalPose = tempLocalPose;
+            if(GeoLocationUpdatedEvent != null)
+            {
+                GeoLocationUpdatedEvent.Invoke(localPose.position);
+            }
             return true;
         }
 
         async public Task<bool> CoordAlignmentAsync()
         {
-            IsLocalized = await WaitForConvergence();
-            if(!IsLocalized)
+            var resTuple = await WaitForConvergence();
+            IsLocalized = resTuple.Item1;
+            _currGeoPose = resTuple.Item2;
+            if(IsLocalized)
             {
-                return IsLocalized;
+                _originInGeoCoord = new GeoPosition(_currGeoPose.GeoPos.Latitude,
+                                                    _currGeoPose.GeoPos.Longtitude,
+                                                    _currGeoPose.GeoPos.Altitude);
             }
             return IsLocalized;
         }
 
-        async private Task<bool> WaitForConvergence()
+        async private Task<Tuple<bool, GeoLocation>> WaitForConvergence()
         {
             var isSuccess = false;
+            var geoPose = new GeoLocation();
             var cnt = 0;
             var intervalMSec = 1000;
             while(cnt * intervalMSec * 0.001f < _config.CoordAlignmentTimeoutSec)
             {
-                EstimateGeoLocation(out var geoPose, out var _);
+                if(_geoLocEstimator.GetGPSPose(out geoPose) != GARResult.SUCCESS)
+                {
+                    await Task.Delay(intervalMSec);
+                    cnt++;
+                    continue;
+                }
                 if((geoPose.HorizontalError < _config.GeoLocConvergenceErrThreshold)
                         && (geoPose.VerticalError < _config.GeoLocConvergenceErrThreshold))
                 {
@@ -95,7 +122,7 @@ namespace GlobalAR
                 await Task.Delay(intervalMSec);
                 cnt++;
             }
-            return isSuccess;
+            return new Tuple<bool, GeoLocation>(isSuccess, geoPose);
         }
     }
 }

@@ -15,8 +15,8 @@ MonoBehaviour:
   MockData:
     Timestamp: 0
     GeoPos:
-      Latitude: 35.529166
-      Longtitude: 139.69375
-      Altitude: 3
+      Latitude: 35.531664234319436
+      Longtitude: 139.69824465760138
+      Altitude: 2.07
     VerticalError: 0
     HorizontalError: 0

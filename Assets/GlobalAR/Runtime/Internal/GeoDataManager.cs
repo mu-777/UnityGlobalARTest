@@ -38,7 +38,12 @@ namespace GlobalAR
             _geoLoader = GeoDataLoaderFactory.Create(system, config);
         }
 
-        public void Update(GeoPosition currGeoPos)
+        public void Update()
+        {
+
+        }
+
+        public void LoadGeoDataIfNeeded(GeoPosition currGeoPos)
         {
             var geoMeshCode = GeoDataUtils.GeoPositionToMeshCode3rd(currGeoPos);
 

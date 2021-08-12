@@ -95,6 +95,21 @@ namespace GlobalAR
                                                  ));
             return earthRadius * ds;
         }
+
+        public void Translate(Vector3 translation)
+        {
+            // https://ja.wikipedia.org/wiki/%E5%A4%A7%E5%86%86%E8%B7%9D%E9%9B%A2
+            const double earthRadius = 6371009;
+            const double deg2rad = Math.PI / 180.0;
+            const double rad2deg = 1.0 / deg2rad;
+
+            var offsetX = Mathf.Abs(translation.x);
+            var offsetZ = Mathf.Abs(translation.z);
+
+            this.Latitude += Mathf.Sign(translation.z) * rad2deg * (offsetZ / earthRadius);
+            this.Longtitude += Mathf.Sign(translation.x) * rad2deg * 2.0 * Math.Asin(Math.Sin(offsetX / (2.0 * earthRadius)) / Math.Abs(Math.Cos(this.Longtitude * deg2rad)));
+            this.Altitude += translation.y;
+        }
     }
 
     [System.Serializable]

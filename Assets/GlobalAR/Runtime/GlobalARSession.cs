@@ -16,6 +16,10 @@ namespace GlobalAR
         public ScriptableObject geoDataLoaderConfig;
 
         [System.Serializable]
+        public class GeoLocationUpdatedEvent : UnityEvent<Vector3> { };
+        public GeoLocationUpdatedEvent OnGeoLocationUpdated;
+
+        [System.Serializable]
         public class NewGeoDataLoadedEvent : UnityEvent<GeoData> { };
         public NewGeoDataLoadedEvent OnNewGeoDataLoaded;
 
